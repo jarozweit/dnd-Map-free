@@ -1,25 +1,8 @@
-import express from "express";
-import nodemailer from "nodemailer";
-
-const app = express();
-app.use(express.json());
-app.use(express.static("public")); // <-- dein HTML wird ausgeliefert
-
-// E-Mail Transporter (Railway ENV Variablen!)
-const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
-    secure: false,
-    auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
-    }
-});
-
 app.post("/api/order", async (req, res) => {
     const { firstname, lastname, email, description } = req.body;
 
-    const mailOptions = {
+    // E-Mail an dich (Benachrichtigung)
+    const adminMail = {
         from: process.env.SMTP_USER,
         to: process.env.NOTIFY_EMAIL,
         subject: "Neue D&D‑Map Bestellung",
@@ -35,15 +18,39 @@ ${description}
         `
     };
 
+    // E-Mail an den Kunden (Bestellbestätigung)
+    const customerMail = {
+        from: process.env.SMTP_USER,
+        to: email,
+        subject: "Bestellbestätigung – Deine D&D‑Map",
+        text: `
+Hallo ${firstname},
+
+vielen Dank für deine Bestellung deiner individuellen D&D‑Map!
+
+Ich habe deine Anfrage erhalten und melde mich so schnell wie möglich bei dir,
+um Details zu klären und den nächsten Schritt zu besprechen.
+
+Hier nochmal deine Angaben:
+
+Beschreibung:
+${description}
+
+Beste Grüße
+Jaro
+        `
+    };
+
     try {
-        await transporter.sendMail(mailOptions);
+        // 1. Mail an dich
+        await transporter.sendMail(adminMail);
+
+        // 2. Mail an den Kunden
+        await transporter.sendMail(customerMail);
+
         res.json({ success: true });
     } catch (err) {
         console.error(err);
         res.status(500).json({ success: false });
     }
 });
-
-app.listen(process.env.PORT || 3000, () =>
-    console.log("Server läuft auf Railway")
-);
