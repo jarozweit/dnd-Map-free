@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>D&D‑Map Bestellung</title>
+
+    <!-- Fantasy‑Schriftarten -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=IM+Fell+English&display=swap" rel="stylesheet">
+    <link href="" rel="stylesheet">
+
+  </head>
+
+<body>
+
+<div class="banner">
+    <img src="./img/DnD-Logo.png" alt="D&D Banner">
+    
+</div>
+
+<div class="container">
+    <h2>
+        Bestellung für eine <span class="dnd-font">D&D</span>‑Map
+    </h2>
+
+    <label>Vorname:</label>
+    <input id="firstname" type="text" required>
+
+    <label>Nachname:</label>
+    <input id="lastname" type="text" required>
+
+    <label>E‑Mail Adresse:</label>
+    <input id="email" type="email" required>
+
+    <label>Beschreibung der gewünschten Map:</label>
+    <textarea id="description" rows="5" required></textarea>
+
+    <button onclick="sendOrder()">Abschicken</button>
+
+    <div id="message"></div>
+</div>
+
+<div id="popup">Deine Bestellung wurde erfolgreich abgeschickt!</div>
+
+<script>
+    async function sendOrder() {
+        const data = {
+            firstname: document.getElementById("firstname").value,
+            lastname: document.getElementById("lastname").value,
+            email: document.getElementById("email").value,
+            description: document.getElementById("description").value
+        };
+
+        const response = await fetch("/api/order", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            showPopup();
+        } else {
+            alert("Fehler beim Abschicken.");
+        }
+    }
+
+    function showPopup() {
+        const popup = document.getElementById("popup");
+        popup.style.display = "block";
+
+        setTimeout(() => {
+            popup.style.display = "none";
+        }, 2500);
+    }
+</script>
+
+</body>
+</html>
