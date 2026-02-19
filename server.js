@@ -36,7 +36,7 @@ ${description}
             text: `
 Hallo ${firstname},
 
-vielen Dank für deine Bestellung deiner individuellen D&D‑Map!
+vielen Dank für die Bestellung deiner individuellen D&D‑Map!
 
 Ich habe deine Anfrage erhalten und melde mich so schnell wie möglich bei dir,
 um Details zu klären und den nächsten Schritt zu besprechen.
